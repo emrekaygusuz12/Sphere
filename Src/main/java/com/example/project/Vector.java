@@ -1,3 +1,5 @@
+package com.example.project;
+
 import java.lang.Math.*;
 
 public class Vector {
