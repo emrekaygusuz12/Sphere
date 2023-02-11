@@ -7,8 +7,10 @@ Do not use JavaFX functions or other libraries to do the main parts of the assig
 All of those functions must be written by yourself
 You may use libraries to achieve a better GUI
 */
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,134 +34,89 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.io.*;
 import java.lang.Math.*;
+
 import javafx.geometry.HPos;
 
 import static java.lang.Math.sqrt;
 
 public class Main extends Application {
-  int Width = 640;
-  int Height = 640;
+    int Width = 640;
+    int Height = 640;
 
-  int green_col = 255; //just for the test example
+    int green_col = 255; //just for the test example
 
-  @Override
-  public void start(Stage stage) throws FileNotFoundException {
-    stage.setTitle("Ray Tracing");
+    @Override
+    public void start(Stage stage) throws FileNotFoundException {
+        stage.setTitle("Ray Tracing");
 
-    //We need 3 things to see an image
-    //1. We create an image we can write to
-    WritableImage image = new WritableImage(Width, Height);
-    //2. We create a view of that image
-    ImageView view = new ImageView(image);
-    //3. Add to the pane (below)
+        //We need 3 things to see an image
+        //1. We create an image we can write to
+        WritableImage image = new WritableImage(Width, Height);
+        //2. We create a view of that image
+        ImageView view = new ImageView(image);
+        //3. Add to the pane (below)
 
-    //Create the simple GUI
-    Slider g_slider = new Slider(0, 255, green_col);
+        //Create the simple GUI
+        Slider g_slider = new Slider(0, 255, green_col);
 
-    //Add all the event handlers
-    g_slider.valueProperty().addListener(
-      new ChangeListener < Number > () {
-        public void changed(ObservableValue < ? extends Number >
-          observable, Number oldValue, Number newValue) {
-          green_col = newValue.intValue();
-          Render(image);
-        }
-      });
+        //Add all the event handlers
+        g_slider.valueProperty().addListener(
+                new ChangeListener<Number>() {
+                    public void changed(ObservableValue<? extends Number>
+                                                observable, Number oldValue, Number newValue) {
+                        green_col = newValue.intValue();
+                        Render(image);
+                    }
+                });
 
-    //The following is in case you want to interact with the image in any way
-    //e.g., for user interaction, or you can find out the pixel position for debugging
-    view.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
-      System.out.println(event.getX() + " " + event.getY());
-      event.consume();
-    });
+        //The following is in case you want to interact with the image in any way
+        //e.g., for user interaction, or you can find out the pixel position for debugging
+        view.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
+            System.out.println(event.getX() + " " + event.getY());
+            event.consume();
+        });
 
-    Render(image);
+        Render(image);
 
-    GridPane root = new GridPane();
-    root.setVgap(12);
-    root.setHgap(12);
+        GridPane root = new GridPane();
+        root.setVgap(12);
+        root.setHgap(12);
 
-    //3. (referring to the 3 things we need to display an image)
-    //we need to add it to the pane
-    root.add(view, 0, 0);
-    root.add(g_slider, 0, 1);
+        //3. (referring to the 3 things we need to display an image)
+        //we need to add it to the pane
+        root.add(view, 0, 0);
+        root.add(g_slider, 0, 1);
 
-    //Display to user
-    Scene scene = new Scene(root, 1024, 768);
-    stage.setScene(scene);
-    stage.show();
-  }
+        //Display to user
+        Scene scene = new Scene(root, 1024, 768);
+        stage.setScene(scene);
+        stage.show();
+    }
 
-  public void Render(WritableImage image) {
-    //Get image dimensions, and declare loop variables
-    int w = (int) image.getWidth(), h = (int) image.getHeight(), i, j;
-    PixelWriter image_writer = image.getPixelWriter();
+    public void Render(WritableImage image) {
+        //Get image dimensions, and declare loop variables
+        int w = (int) image.getWidth(), h = (int) image.getHeight(), i, j;
+        PixelWriter image_writer = image.getPixelWriter();
 
-    double c = green_col / 255.0;
-    Vector col;
-    //Sphere
-    Vector sphereCol = new Vector(1.,c,0.);
-    Vector bkgCol = new Vector(0.5,0.5,0.5);
+        double c = green_col / 255.0;
 
-    Vector o = new Vector(0,0,0);
-    Vector d = new Vector(0,0,1);
-    Vector cs = new Vector(0,0,0);
-    double r = 100;
-    Vector p = new Vector(0,0,0);
-    double a;
-    double b;
-    Vector Light = new Vector(250,250,-400);
+        Sphere mySphere = new Sphere(h, w, c, image_writer);
+        Sphere mySphere2 = new Sphere(h, w, c, image_writer);
+        Sphere mySphere3 = new Sphere(h, w, c, image_writer);
 
-    for (j = 0; j < h; j++) {
-      for (i = 0; i < w; i++) {
-        Vector v = o.sub(cs);
-        o = new Vector(i-w/2,j-h/2,-400);
-        o.x = i - 250;
-        o.y = j - 250;
-        o.z = -200;
-        a = d.dot(d);
-        b = 2 * v.dot(d);
-        c = v.dot(v)-r * r;
-        double disc = b * b - 4 * a * c;
-        if (disc < 0){
-          image_writer.setColor(i, j, Color.color(bkgCol.x,bkgCol.y,bkgCol.z,1.0));
-        } else {
-          double t = (-b-sqrt(disc)/2*a);
-          if (t < 0){
-              t = (b-sqrt(disc)/2*a);
+        mySphere.intersection();
+        mySphere2.intersection();
+        mySphere3.intersection();
 
-          }
-          if (t < 0) {
-            image_writer.setColor(i, j, Color.color(sphereCol.x, sphereCol.y, sphereCol.z, 1.0));
-          } else {
-            p = o.add(d.mul(t));
-            Vector n = p.sub(cs);
-            n.normalise();
-            Vector Lv = Light.sub(p);
-            Lv.normalise();
-            double dp = Lv.dot(n);
-            if (dp<0) {
-              dp = 0;
-            }
-            if(dp > 1){
-              dp = 1;
-            }
-            col = sphereCol.mul(dp);
-            image_writer.setColor(i, j, Color.color(col.x, col.y,  col.z, 1.0));
-          }
-        }
-
-      } // column loop
-    } // row loop
-  }
+    }
 
 
-
-  public static void main(String[] args) {
-    launch();
-  }
-
+    public static void main(String[] args) {
+        launch();
+    }
 }
+
