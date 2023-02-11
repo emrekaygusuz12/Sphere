@@ -6,23 +6,8 @@ import javafx.scene.paint.Color;
 import static java.lang.Math.sqrt;
 
 public class Sphere {
-
-    //x,y,z coordinates
-    double x;
-    double y;
-    double z;
-
-    Vector v; //vector from the centre of the sphere to the origin of the line
-    Vector p; //3d points (on the line or sphere)
-    Vector cs; //centre of the sphere
-    Vector o; //origin of ray
-    Vector d; //direction
-    Vector t; //solution
-
     PixelWriter image_writer;
-
     final double r = 100; //radius
-
     int height;
     int width;
     double c;
@@ -41,6 +26,9 @@ public class Sphere {
         this.image_writer = image_writer;
     }
 
+    /**
+     * Intersection method
+     */
     public void intersection() {
         Vector p = new Vector(0, 0, 0);
         Vector cs = new Vector(0, 0, 0);
