@@ -101,7 +101,7 @@ public class Main extends Application {
     double c = green_col / 255.0;
     Vector col;
     //Sphere
-    Vector sphereCol = new Vector(1.,green_col,0.);
+    Vector sphereCol = new Vector(1.,c,0.);
     Vector bkgCol = new Vector(0.5,0.5,0.5);
 
     Vector o = new Vector(0,0,0);
