@@ -61,7 +61,7 @@ public class Main extends Application {
         //3. Add to the pane (below)
 
         //Create the simple GUI
-        Slider g_slider = new Slider(0, 255, green_col);
+        Slider g_slider = new Slider(0, 255, green_col); //add more sliders for every colour
 
         //Add all the event handlers
         g_slider.valueProperty().addListener(
@@ -99,21 +99,122 @@ public class Main extends Application {
 
     public void Render(WritableImage image) {
         //Get image dimensions, and declare loop variables
-        int w = (int) image.getWidth(), h = (int) image.getHeight(), i, j;
+        int width = (int) image.getWidth(), height = (int) image.getHeight(), i, j;
         PixelWriter image_writer = image.getPixelWriter();
 
-        double c = green_col / 255.0;
+        double colour = green_col / 255.0;
 
-        Sphere mySphere = new Sphere(h, w, c, image_writer);
-        Sphere mySphere2 = new Sphere(h, w, c, image_writer);
-        Sphere mySphere3 = new Sphere(h, w, c, image_writer);
+        Sphere mySphere1 = new Sphere(new Vector(-100, -100, 0.), colour, 100);
+        Sphere mySphere2 = new Sphere(new Vector( 0,0,0), colour, 110);
+        Sphere mySphere3 = new Sphere(new Vector(100,100,100), colour, 120);
 
-        mySphere.intersection();
-        mySphere2.intersection();
-        mySphere3.intersection();
+        Sphere[] myArray = new Sphere[3];
+        myArray[0] = mySphere1;
+        myArray[1] = mySphere2;
+        myArray[2] = mySphere3;
 
+        Vector o = new Vector(0, 0, 0);
+        Vector d = new Vector(0, 0, 1);
+        Vector p = new Vector(0, 0, 0);
+        Vector Light = new Vector(250, 250, -400);
+        double disc = -1;
+        double t;
+        Vector v;
+        Vector col;
+        Vector sphereCol = new Vector(1., 0, 0.);
+        Vector bkgCol = new Vector(0.5, 0.5, 0.5);
+
+        for (j = 0; j < height; j++) {
+            for (i = 0; i < width; i++) {
+
+                image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
+                        bkgCol.z, 1.0)); //bkg col
+                for (Sphere s : myArray) {
+                    o = new Vector(i - width / 2, j - height / 2, -400);
+                    o.x = i - 250;
+                    o.y = j - 250;
+                    o.z = -200;
+                    v = o.sub(s.getCs());
+                    double a = d.dot(d); //intersection a
+                    double b = 2 * v.dot(d); //intersection b
+                    double c = v.dot(v) - s.getR() * s.getR(); //intersection c
+                    disc = b * b - 4 * a * c; //part of the quadratic formula
+                    if (disc> 0) { // ray hit the sphere
+                        double current_t = (-b - sqrt(disc) / 2 * a); //quadratic formula
+                        double new_t = current_t;
+                        if (current_t < new_t){
+                            new_t = current_t;
+                        }
+                        if (current_t < 0) {
+                            current_t = (b - sqrt(disc) / 2 * a);
+                        }
+                        if (current_t < 0) {
+                            image_writer.setColor(i, j, Color.color(sphereCol.x,
+                                    sphereCol.y, sphereCol.z, 1.0)); //sphere col
+                        } else {
+                            p = o.add(d.mul(current_t));
+                            Vector n = p.sub(s.getCs());
+                            n.normalise();
+                            Vector Lv = Light.sub(p);
+                            Lv.normalise();
+                            double dp = Lv.dot(n);
+                            if (dp < 0) {
+                                dp = 0;
+                            }
+                            if (dp > 1) {
+                                dp = 1;
+                            }
+                            col = sphereCol.mul(dp * 7).add(sphereCol.mul(.3));
+
+
+                            image_writer.setColor(i, j, Color.color(col.x,
+                                    col.y, col.z, 1.0));
+                        }
+                    } //end of hit if
+                }
+            }
+        }
     }
+            /*
+                    o = new Vector(i - width / 2, j - height / 2, -400);
+                    o.x = i - 250;
+                    o.y = j - 250;
+                    o.z = -200;
+                    multiSphere(height,width);
+                    if (disc < 0) {
+                        image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
+                                bkgCol.z, 1.0));
+                    } else {
+                        t = (-b - sqrt(disc) / 2 * a); //quadratic formula
+                        if (t < 0) {
+                            t = (b - sqrt(disc) / 2 * a);
+                        }
+                        if (t < 0) {
+                            image_writer.setColor(i, j, Color.color(sphereCol.x,
+                                    sphereCol.y, sphereCol.z, 1.0));
+                        } else {
+                            p = o.add(d.mul(t));
+                            Vector n = p.sub(cs);
+                            n.normalise();
+                            Vector Lv = Light.sub(p);
+                            Lv.normalise();
+                            double dp = Lv.dot(n);
+                            if (dp < 0) {
+                                dp = 0;
+                            }
+                            if (dp > 1) {
+                                dp = 1;
+                            }
+                            col = sphereCol.mul(dp * 7).add(sphereCol.mul(.3));
+                            image_writer.setColor(i, j, Color.color(col.x,
+                                    col.y, col.z, 1.0));
+                        }
+                    }
+                } // column loop
+            } // row loop
+        }
 
+*/
 
     public static void main(String[] args) {
         launch();
