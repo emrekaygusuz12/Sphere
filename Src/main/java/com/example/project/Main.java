@@ -47,7 +47,12 @@ public class Main extends Application {
     int Width = 640;
     int Height = 640;
 
-    int green_col = 255; //just for the test example
+    int col = 255; //just for the test example
+
+    private boolean isSphere1Selected = false;
+    private boolean isSphere2Selected = false;
+    private boolean isSphere3Selected = false;
+
 
     @Override
     public void start(Stage stage) throws FileNotFoundException {
@@ -61,14 +66,48 @@ public class Main extends Application {
         //3. Add to the pane (below)
 
         //Create the simple GUI
-        Slider g_slider = new Slider(0, 255, green_col); //add more sliders for every colour
+        Slider g_slider = new Slider(0, 255, col); //add more sliders for every colour
+        Slider r_slider1 = new Slider(0,255, col);
+        Slider b_slider2 = new Slider(0,255, col);
+
+        ToggleGroup tg = new ToggleGroup();
+
+        RadioButton rb1 = new RadioButton("Sphere 1");
+        RadioButton rb2 = new RadioButton("Sphere 2");
+        RadioButton rb3 = new RadioButton("Sphere 3");
+
+        rb1.setToggleGroup(tg);
+        rb2.setToggleGroup(tg);
+        rb3.setToggleGroup(tg);
+
+        tg.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observableValue, Toggle toggle, Toggle t1) {
+                RadioButton rb1 = (RadioButton)tg.getSelectedToggle();
+                //RadioButton rb2 = (RadioButton)tg.getSelectedToggle();
+                if (rb1.isSelected()){
+                    isSphere1Selected = true;
+                } else if (rb2.isSelected()) {
+                    isSphere2Selected = true;
+                } else if (rb3.isSelected()){
+                    isSphere3Selected = true;
+                } else  {
+                    throw new IllegalArgumentException("Sphere is not selected");
+                }
+            }
+
+        });
+
 
         //Add all the event handlers
         g_slider.valueProperty().addListener(
                 new ChangeListener<Number>() {
                     public void changed(ObservableValue<? extends Number>
                                                 observable, Number oldValue, Number newValue) {
-                        green_col = newValue.intValue();
+                        col = newValue.intValue();
+                        col = newValue.intValue();
+                        col = newValue.intValue();
+
                         Render(image);
                     }
                 });
@@ -89,7 +128,13 @@ public class Main extends Application {
         //3. (referring to the 3 things we need to display an image)
         //we need to add it to the pane
         root.add(view, 0, 0);
+        root.add(rb1,1,1);
         root.add(g_slider, 0, 1);
+        root.add(rb2,1,2);
+        root.add(r_slider1,0,2);
+        root.add(rb3,1,3);
+        root.add(b_slider2,0,3);
+
 
         //Display to user
         Scene scene = new Scene(root, 1024, 768);
@@ -102,11 +147,11 @@ public class Main extends Application {
         int width = (int) image.getWidth(), height = (int) image.getHeight(), i, j;
         PixelWriter image_writer = image.getPixelWriter();
 
-        double colour = green_col / 255.0;
+        double colour = col / 255.0;
 
-        Sphere mySphere1 = new Sphere(new Vector(-100, -100, 0.), colour, 100);
-        Sphere mySphere2 = new Sphere(new Vector( 0,0,0), colour, 110);
-        Sphere mySphere3 = new Sphere(new Vector(100,100,100), colour, 120);
+        Sphere mySphere1 = new Sphere(new Vector(-100, 0, 0.), colour, 60);
+        Sphere mySphere2 = new Sphere(new Vector( 0,100,0), colour, 60);
+        Sphere mySphere3 = new Sphere(new Vector(100,200,0), colour, 60);
 
         Sphere[] myArray = new Sphere[3];
         myArray[0] = mySphere1;
@@ -121,7 +166,7 @@ public class Main extends Application {
         double t;
         Vector v;
         Vector col;
-        Vector sphereCol = new Vector(1., 0, 0.);
+        Vector sphereCol = new Vector(1., colour, 0.);
         Vector bkgCol = new Vector(0.5, 0.5, 0.5);
 
         for (j = 0; j < height; j++) {
@@ -130,6 +175,8 @@ public class Main extends Application {
                 image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
                         bkgCol.z, 1.0)); //bkg col
                 for (Sphere s : myArray) {
+                    //if (s == mySphere1){
+                   // }
                     o = new Vector(i - width / 2, j - height / 2, -400);
                     o.x = i - 250;
                     o.y = j - 250;
