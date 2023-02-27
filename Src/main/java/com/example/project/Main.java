@@ -45,13 +45,14 @@ import static java.lang.Math.sqrt;
 
 public class Main extends Application {
     int Width = 640;
-    int Height = 640;
-
-    int col = 255; //just for the test example
+    int Height = 580;
 
     private boolean isSphere1Selected = false;
     private boolean isSphere2Selected = false;
     private boolean isSphere3Selected = false;
+    private Sphere[] myArray = new Sphere[3];
+
+
 
 
     @Override
@@ -65,10 +66,51 @@ public class Main extends Application {
         ImageView view = new ImageView(image);
         //3. Add to the pane (below)
 
+
+        Sphere mySphere1 = new Sphere(new Vector(-100, 0, -100),
+                new Vector(0,1,1), 60);
+        Sphere mySphere2 = new Sphere(new Vector( 0,100,-100),
+                new Vector(1,1,1), 60);
+        Sphere mySphere3 = new Sphere(new Vector(100,200,-100),
+                new Vector(1,1,0), 60);
+
+        myArray[0] = mySphere1;
+        myArray[1] = mySphere2;
+        myArray[2] = mySphere3;
+
+        Vector green_v = new Vector(0, 1 , 0);
+        myArray[0].setColour(green_v);
+        Vector red_v = new Vector(1, 0 , 0);
+        myArray[1].setColour(red_v);
+        Vector blue_v = new Vector(0, 0 , 1);
+        myArray[2].setColour(blue_v);
+        Render(image);
+
+        Label green = new Label("Green");
+        Label red = new Label("Red");
+        Label blue = new Label("Blue");
         //Create the simple GUI
-        Slider g_slider = new Slider(0, 255, col); //add more sliders for every colour
-        Slider r_slider1 = new Slider(0,255, col);
-        Slider b_slider2 = new Slider(0,255, col);
+        Slider g_slider = new Slider(0, 255, 1); //add more sliders for every colour
+        Label greenCaption = new Label(Double.toString(g_slider.getValue()));
+        g_slider.setMin(0);
+        g_slider.setMax(255);
+        g_slider.setShowTickLabels(true);
+        g_slider.setShowTickMarks(true);
+        //g_slider.setMajorTickUnit(127.5);
+        Slider r_slider = new Slider(0,255, 1);
+        Label redCaption = new Label(Double.toString(r_slider.getValue()));
+        r_slider.setMin(0);
+        r_slider.setMax(255);
+        r_slider.setShowTickLabels(true);
+        r_slider.setShowTickMarks(true);
+       //r_slider.setMajorTickUnit(127.5);
+        Slider b_slider = new Slider(0,255, 1);
+        Label blueCaption = new Label(Double.toString(b_slider.getValue()));
+        b_slider.setMin(0);
+        b_slider.setMax(255);
+        b_slider.setShowTickLabels(true);
+        b_slider.setShowTickMarks(true);
+        //b_slider.setMajorTickUnit(127.5);
 
         ToggleGroup tg = new ToggleGroup();
 
@@ -82,33 +124,91 @@ public class Main extends Application {
 
         tg.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
-            public void changed(ObservableValue<? extends Toggle> observableValue, Toggle toggle, Toggle t1) {
-                RadioButton rb1 = (RadioButton)tg.getSelectedToggle();
-                //RadioButton rb2 = (RadioButton)tg.getSelectedToggle();
-                if (rb1.isSelected()){
+            public void changed(ObservableValue<? extends Toggle> observableValue,
+                                Toggle toggle, Toggle t1) {
+                RadioButton check = (RadioButton)tg.getSelectedToggle();
+                if (check.equals(rb1)){
                     isSphere1Selected = true;
-                } else if (rb2.isSelected()) {
+                    isSphere2Selected = false;
+                    isSphere3Selected = false;
+                } else if (check.equals(rb2)) {
                     isSphere2Selected = true;
-                } else if (rb3.isSelected()){
+                    isSphere1Selected = false;
+                    isSphere3Selected = false;
+                } else if (check.equals(rb3)){
                     isSphere3Selected = true;
+                    isSphere1Selected = false;
+                    isSphere2Selected = false;
                 } else  {
-                    throw new IllegalArgumentException("Sphere is not selected");
+                    isSphere1Selected = false;
+                    isSphere2Selected = false;
+                    isSphere3Selected = false;
                 }
             }
 
         });
-
 
         //Add all the event handlers
         g_slider.valueProperty().addListener(
                 new ChangeListener<Number>() {
                     public void changed(ObservableValue<? extends Number>
                                                 observable, Number oldValue, Number newValue) {
-                        col = newValue.intValue();
-                        col = newValue.intValue();
-                        col = newValue.intValue();
+                        if(isSphere1Selected == true) {
+                            Vector newCol = new Vector(myArray[0].getColour().x, newValue.doubleValue()/255 , myArray[0].getColour().z);
+                            myArray[0].setColour(newCol);
+                            Render(image);
+                        } else if (isSphere2Selected == true) {
+                            Vector newCol2 = new Vector(myArray[1].getColour().x, newValue.doubleValue()/255, myArray[1].getColour().z);
+                            myArray[1].setColour(newCol2);
+                            Render(image);
+                        } else if (isSphere3Selected) {
+                            Vector newCol3 = new Vector(myArray[2].getColour().x, newValue.doubleValue()/255, myArray[2].getColour().z);
+                            myArray[2].setColour(newCol3);
+                            Render(image);
+                        }
+                    }
+                });
 
-                        Render(image);
+        //Add all the event handlers
+        r_slider.valueProperty().addListener(
+                new ChangeListener<Number>() {
+                    public void changed(ObservableValue<? extends Number>
+                                                observable, Number oldValue, Number newValue) {
+                        if(isSphere1Selected == true) {
+                            Vector newCol = new Vector(newValue.doubleValue()/255, myArray[0].getColour().y, myArray[0].getColour().z);
+                            myArray[0].setColour(newCol);
+                            System.out.println(newCol.x);
+                            Render(image);
+                        } else if (isSphere2Selected == true) {
+                            Vector newCol2 = new Vector(newValue.doubleValue()/255, myArray[1].getColour().y, myArray[1].getColour().z);
+                            myArray[1].setColour(newCol2);
+                            Render(image);
+                        } else if (isSphere3Selected) {
+                            Vector newCol3 = new Vector(newValue.doubleValue()/255, myArray[2].getColour().y, myArray[2].getColour().z);
+                            myArray[2].setColour(newCol3);
+                            Render(image);
+                        }
+                    }
+                });
+
+        //Add all the event handlers
+        b_slider.valueProperty().addListener(
+                new ChangeListener<Number>() {
+                    public void changed(ObservableValue<? extends Number>
+                                                observable, Number oldValue, Number newValue) {
+                        if(isSphere1Selected == true) {
+                            Vector newCol = new Vector(myArray[0].getColour().x, myArray[0].getColour().y, newValue.doubleValue()/255);
+                            myArray[0].setColour(newCol);
+                            Render(image);
+                        } else if (isSphere2Selected == true) {
+                            Vector newCol2 = new Vector(myArray[1].getColour().x, myArray[1].getColour().y, newValue.doubleValue()/255);
+                            myArray[1].setColour(newCol2);
+                            Render(image);
+                        } else if (isSphere3Selected) {
+                            Vector newCol3 = new Vector(myArray[2].getColour().x, myArray[2].getColour().y, newValue.doubleValue()/255);
+                            myArray[2].setColour(newCol3);
+                            Render(image);
+                        }
                     }
                 });
 
@@ -128,12 +228,16 @@ public class Main extends Application {
         //3. (referring to the 3 things we need to display an image)
         //we need to add it to the pane
         root.add(view, 0, 0);
-        root.add(rb1,1,1);
-        root.add(g_slider, 0, 1);
-        root.add(rb2,1,2);
-        root.add(r_slider1,0,2);
-        root.add(rb3,1,3);
-        root.add(b_slider2,0,3);
+        root.add(rb1,1,2);
+        root.add(r_slider, 0, 2);
+        root.add(rb2,1,3);
+        root.add(g_slider,0,3);
+        root.add(rb3,1,4);
+        root.add(b_slider,0,4);
+
+        root.add(green,0,2);
+        root.add(red,0,3);
+        root.add(blue, 0, 4);
 
 
         //Display to user
@@ -147,37 +251,22 @@ public class Main extends Application {
         int width = (int) image.getWidth(), height = (int) image.getHeight(), i, j;
         PixelWriter image_writer = image.getPixelWriter();
 
-        double colour = col / 255.0;
-
-        Sphere mySphere1 = new Sphere(new Vector(-100, 0, 0.), colour, 60);
-        Sphere mySphere2 = new Sphere(new Vector( 0,100,0), colour, 60);
-        Sphere mySphere3 = new Sphere(new Vector(100,200,0), colour, 60);
-
-        Sphere[] myArray = new Sphere[3];
-        myArray[0] = mySphere1;
-        myArray[1] = mySphere2;
-        myArray[2] = mySphere3;
-
-        Vector o = new Vector(0, 0, 0);
-        Vector d = new Vector(0, 0, 1);
-        Vector p = new Vector(0, 0, 0);
-        Vector Light = new Vector(250, 250, -400);
-        double disc = -1;
+        Vector o;
+        Vector d = new Vector(1, 0, 1);
+        Vector Light = new Vector(250, 250, 300);
+        double disc;
         double t;
         Vector v;
+        Vector bkgCol = new Vector(0, 0, 0);
         Vector col;
-        Vector sphereCol = new Vector(1., colour, 0.);
-        Vector bkgCol = new Vector(0.5, 0.5, 0.5);
 
         for (j = 0; j < height; j++) {
             for (i = 0; i < width; i++) {
-
+                o = new Vector(i - width / 2, j - height / 2, -400);
                 image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
                         bkgCol.z, 1.0)); //bkg col
+                double small_t = 0;
                 for (Sphere s : myArray) {
-                    //if (s == mySphere1){
-                   // }
-                    o = new Vector(i - width / 2, j - height / 2, -400);
                     o.x = i - 250;
                     o.y = j - 250;
                     o.z = -200;
@@ -188,18 +277,16 @@ public class Main extends Application {
                     disc = b * b - 4 * a * c; //part of the quadratic formula
                     if (disc> 0) { // ray hit the sphere
                         double current_t = (-b - sqrt(disc) / 2 * a); //quadratic formula
-                        double new_t = current_t;
-                        if (current_t < new_t){
-                            new_t = current_t;
-                        }
                         if (current_t < 0) {
-                            current_t = (b - sqrt(disc) / 2 * a);
+                            current_t = (-b + sqrt(disc) / 2 * a);
+                            if (current_t < small_t){
+                                small_t = current_t;
+                            }
+                            image_writer.setColor(i, j, Color.color(s.getColour().x,
+                                    s.getColour().y, s.getColour().z, 1.0)); //sphere col
                         }
-                        if (current_t < 0) {
-                            image_writer.setColor(i, j, Color.color(sphereCol.x,
-                                    sphereCol.y, sphereCol.z, 1.0)); //sphere col
-                        } else {
-                            p = o.add(d.mul(current_t));
+                         else {
+                            Vector p = o.add(d.mul(current_t));
                             Vector n = p.sub(s.getCs());
                             n.normalise();
                             Vector Lv = Light.sub(p);
@@ -211,7 +298,7 @@ public class Main extends Application {
                             if (dp > 1) {
                                 dp = 1;
                             }
-                            col = sphereCol.mul(dp * 7).add(sphereCol.mul(.3));
+                            col = s.getColour().mul(dp * .7).add(s.getColour().mul(.3));
 
 
                             image_writer.setColor(i, j, Color.color(col.x,
