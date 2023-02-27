@@ -44,8 +44,8 @@ import javafx.geometry.HPos;
 import static java.lang.Math.sqrt;
 
 public class Main extends Application {
-    int Width = 640;
-    int Height = 580;
+    int Width = 540;
+    int Height = 600;
 
     private boolean isSphere1Selected = false;
     private boolean isSphere2Selected = false;
@@ -68,11 +68,11 @@ public class Main extends Application {
 
 
         Sphere mySphere1 = new Sphere(new Vector(-100, 0, -100),
-                new Vector(0,1,1), 60);
+                new Vector(0,1,1), 50);
         Sphere mySphere2 = new Sphere(new Vector( 0,100,-100),
-                new Vector(1,1,1), 60);
+                new Vector(1,1,1), 50);
         Sphere mySphere3 = new Sphere(new Vector(100,200,-100),
-                new Vector(1,1,0), 60);
+                new Vector(1,1,0), 50);
 
         myArray[0] = mySphere1;
         myArray[1] = mySphere2;
@@ -89,28 +89,43 @@ public class Main extends Application {
         Label green = new Label("Green");
         Label red = new Label("Red");
         Label blue = new Label("Blue");
+        Label l_x = new Label("X");
+        Label l_y = new Label("Y");
+        Label l_z = new Label("Z");
         //Create the simple GUI
         Slider g_slider = new Slider(0, 255, 1); //add more sliders for every colour
-        Label greenCaption = new Label(Double.toString(g_slider.getValue()));
         g_slider.setMin(0);
         g_slider.setMax(255);
         g_slider.setShowTickLabels(true);
         g_slider.setShowTickMarks(true);
-        //g_slider.setMajorTickUnit(127.5);
         Slider r_slider = new Slider(0,255, 1);
-        Label redCaption = new Label(Double.toString(r_slider.getValue()));
         r_slider.setMin(0);
         r_slider.setMax(255);
         r_slider.setShowTickLabels(true);
         r_slider.setShowTickMarks(true);
-       //r_slider.setMajorTickUnit(127.5);
         Slider b_slider = new Slider(0,255, 1);
-        Label blueCaption = new Label(Double.toString(b_slider.getValue()));
         b_slider.setMin(0);
         b_slider.setMax(255);
         b_slider.setShowTickLabels(true);
         b_slider.setShowTickMarks(true);
-        //b_slider.setMajorTickUnit(127.5);
+
+        Slider x_slider = new Slider(-250,250,1);
+        x_slider.setMin(0);
+        x_slider.setMax(255);
+        x_slider.setShowTickLabels(true);
+        x_slider.setShowTickMarks(true);
+
+        Slider y_slider = new Slider(-250,250,1);
+        y_slider.setMin(0);
+        y_slider.setMax(255);
+        y_slider.setShowTickLabels(true);
+        y_slider.setShowTickMarks(true);
+
+        Slider z_slider = new Slider(-250,250,1);
+        z_slider.setMin(0);
+        z_slider.setMax(255);
+        z_slider.setShowTickLabels(true);
+        z_slider.setShowTickMarks(true);
 
         ToggleGroup tg = new ToggleGroup();
 
@@ -238,10 +253,17 @@ public class Main extends Application {
         root.add(green,0,2);
         root.add(red,0,3);
         root.add(blue, 0, 4);
+        root.add(l_x,0,5);
+        root.add(l_y, 0, 6);
+        root.add(l_z,0,7);
+
+        root.add(x_slider,0,5);
+        root.add(y_slider,0,6);
+        root.add(z_slider,0,7);
 
 
         //Display to user
-        Scene scene = new Scene(root, 1024, 768);
+        Scene scene = new Scene(root, 1024, 1000);
         stage.setScene(scene);
         stage.show();
     }
