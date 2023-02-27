@@ -262,7 +262,7 @@ public class Main extends Application {
 
         for (j = 0; j < height; j++) {
             for (i = 0; i < width; i++) {
-                o = new Vector(i - width / 2, j - height / 2, -400);
+                o = new Vector(i - width / 2, j - height / 2, -400); //changing this for 7
                 image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
                         bkgCol.z, 1.0)); //bkg col
                 double small_t = 0;
