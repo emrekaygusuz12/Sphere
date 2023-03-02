@@ -9,14 +9,9 @@ import static java.lang.Math.sqrt;
 
 ;
 public class Sphere {
-    double r; //radius
-    Vector cs; //centre
-    Vector colour; // colour
-/*
-    private double x;
-    private double y;
-    private double z;
-*/
+    private double r; //radius
+    private Vector cs; //centre
+    private Vector colour; // colour
 
     /**
      * Constructor for Sphere Class
@@ -30,13 +25,29 @@ public class Sphere {
         this.colour = colour;
         this.r = r;
     }
-/*
-    public void setXYZ(Vector o, double x, double y, double z){
-        this.x = x;
-        this.y = y;
-        this.z = z;
+
+    public boolean intersectionHappened(Vector o, Vector d){
+        Vector v = o.sub(getCs());
+        double a = d.dot(d); //intersection a
+        double b = 2 * v.dot(d); //intersection b
+        double c = v.dot(v) - getR() * getR(); //intersection c
+        double disc = b * b - 4 * a * c; //part of the quadratic formula
+        return disc>=0;
     }
-*/
+
+    public double intersection(Vector o, Vector d){
+        Vector v = o.sub(getCs());
+        double a = d.dot(d); //intersection a
+        double b = 2 * v.dot(d); //intersection b
+        double c = v.dot(v) - getR() * getR(); //intersection c
+        double disc = b * b - 4 * a * c; //part of the quadratic formula
+        double current_t = (-b - sqrt(disc) / 2 * a); //quadratic formula
+        if(current_t < 0){
+            current_t = (-b + sqrt(disc) / 2 * a);
+        }
+        return current_t;
+    }
+
     public void setR(double r) {
         this.r = r;
     }

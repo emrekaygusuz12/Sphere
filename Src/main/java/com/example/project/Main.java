@@ -227,6 +227,67 @@ public class Main extends Application {
                     }
                 });
 
+        //Change value of sliders max to 250.
+
+        x_slider.valueProperty().addListener( new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number>
+                                        observable, Number oldValue, Number newValue) {
+
+                if(isSphere1Selected == true) {
+                    Vector newCol = new Vector(myArray[0].getCs().x, myArray[0].getCs().y,myArray[0].getCs().z);
+                    myArray[0].setCs(newCol);
+                    Render(image);
+                } else if (isSphere2Selected == true) {
+                    Vector newCol2 = new Vector(myArray[1].getCs().x, myArray[1].getCs().y,myArray[1].getCs().z);
+                    myArray[1].setCs(newCol2);
+                    Render(image);
+                } else if (isSphere3Selected == true) {
+                    Vector newCol3 = new Vector(myArray[2].getCs().x, myArray[2].getCs().y,myArray[2].getCs().z);
+                    myArray[2].setCs(newCol3);
+                    Render(image);
+                }
+            }
+        });
+
+        y_slider.valueProperty().addListener( new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number>
+                                        observable, Number oldValue, Number newValue) {
+
+                if(isSphere1Selected == true) {
+                    Vector newCol = new Vector(myArray[0].getCs().x, myArray[0].getCs().y,myArray[0].getCs().z);
+                    myArray[0].setCs(newCol);
+                    Render(image);
+                } else if (isSphere2Selected == true) {
+                    Vector newCol2 = new Vector(myArray[1].getCs().x, myArray[1].getCs().y,myArray[1].getCs().z);
+                    myArray[1].setCs(newCol2);
+                    Render(image);
+                } else if (isSphere3Selected == true) {
+                    Vector newCol3 = new Vector(myArray[2].getCs().x, myArray[2].getCs().y,myArray[2].getCs().z);
+                    myArray[2].setCs(newCol3);
+                    Render(image);
+                }
+            }
+        });
+
+        z_slider.valueProperty().addListener( new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number>
+                                        observable, Number oldValue, Number newValue) {
+
+                if(isSphere1Selected == true) {
+                    Vector newCol = new Vector(myArray[0].getCs().x, myArray[0].getCs().y,myArray[0].getCs().z);
+                    myArray[0].setCs(newCol);
+                    Render(image);
+                } else if (isSphere2Selected == true) {
+                    Vector newCol2 = new Vector(myArray[1].getCs().x, myArray[1].getCs().y,myArray[1].getCs().z);
+                    myArray[1].setCs(newCol2);
+                    Render(image);
+                } else if (isSphere3Selected == true) {
+                    Vector newCol3 = new Vector(myArray[2].getCs().x, myArray[2].getCs().y,myArray[2].getCs().z);
+                    myArray[2].setCs(newCol3);
+                    Render(image);
+                }
+            }
+        });
         //The following is in case you want to interact with the image in any way
         //e.g., for user interaction, or you can find out the pixel position for debugging
         view.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
@@ -285,52 +346,49 @@ public class Main extends Application {
         for (j = 0; j < height; j++) {
             for (i = 0; i < width; i++) {
                 o = new Vector(i - width / 2, j - height / 2, -400); //changing this for 7
-                image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
-                        bkgCol.z, 1.0)); //bkg col
-                double small_t = 0;
+                double small_t = 10000;
+                o.x = i - 250;
+                o.y = j - 250;
+                o.z = -200;
+                boolean hasHit = false;
+                Sphere testSphere = myArray[0];
                 for (Sphere s : myArray) {
-                    o.x = i - 250;
-                    o.y = j - 250;
-                    o.z = -200;
-                    v = o.sub(s.getCs());
-                    double a = d.dot(d); //intersection a
-                    double b = 2 * v.dot(d); //intersection b
-                    double c = v.dot(v) - s.getR() * s.getR(); //intersection c
-                    disc = b * b - 4 * a * c; //part of the quadratic formula
-                    if (disc> 0) { // ray hit the sphere
-                        double current_t = (-b - sqrt(disc) / 2 * a); //quadratic formula
-                        if (current_t < 0) {
-                            current_t = (-b + sqrt(disc) / 2 * a);
-                            if (current_t < small_t){
-                                small_t = current_t;
-                            }
-                            image_writer.setColor(i, j, Color.color(s.getColour().x,
-                                    s.getColour().y, s.getColour().z, 1.0)); //sphere col
+                    if (s.intersectionHappened(o, d)) { // ray hit the sphere
+                        double current_t = s.intersection(o, d); //quadratic formula
+                        if (current_t < small_t) {
+                            hasHit = true;
+                            testSphere = s;
+                            small_t = current_t;
                         }
-                         else {
-                            Vector p = o.add(d.mul(current_t));
-                            Vector n = p.sub(s.getCs());
-                            n.normalise();
-                            Vector Lv = Light.sub(p);
-                            Lv.normalise();
-                            double dp = Lv.dot(n);
-                            if (dp < 0) {
-                                dp = 0;
-                            }
-                            if (dp > 1) {
-                                dp = 1;
-                            }
-                            col = s.getColour().mul(dp * .7).add(s.getColour().mul(.3));
+                    }
 
-
-                            image_writer.setColor(i, j, Color.color(col.x,
-                                    col.y, col.z, 1.0));
-                        }
-                    } //end of hit if
+                } //end of hit if
+                if (hasHit) {
+                    Vector p = o.add(d.mul(small_t));
+                    Vector n = p.sub(testSphere.getCs());
+                    n.normalise();
+                    Vector Lv = Light.sub(p);
+                    Lv.normalise();
+                    double dp = Lv.dot(n);
+                    if (dp < 0) {
+                        dp = 0;
+                    }
+                    if (dp > 1) {
+                        dp = 1;
+                    }
+                    col = testSphere.getColour().mul(dp * .7).add(testSphere.getColour().mul(.3));
+                    image_writer.setColor(i, j, Color.color(col.x,
+                            col.y, col.z, 1.0));
+                } else {
+                    image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
+                            bkgCol.z, 1.0)); //bkg col
                 }
             }
+
         }
     }
+
+
             /*
                     o = new Vector(i - width / 2, j - height / 2, -400);
                     o.x = i - 250;
