@@ -44,8 +44,8 @@ import javafx.geometry.HPos;
 import static java.lang.Math.sqrt;
 
 public class Main extends Application {
-    int Width = 540;
-    int Height = 600;
+    int Width = 500;
+    int Height = 500;
 
     private boolean isSphere1Selected = false;
     private boolean isSphere2Selected = false;
@@ -67,12 +67,12 @@ public class Main extends Application {
         //3. Add to the pane (below)
 
 
-        Sphere mySphere1 = new Sphere(new Vector(-100, 0, -100),
-                new Vector(0,1,1), 50);
-        Sphere mySphere2 = new Sphere(new Vector( 0,100,-100),
+        Sphere mySphere1 = new Sphere(new Vector(0, 0, -100),
+                new Vector(0,1,1), 30);
+        Sphere mySphere2 = new Sphere(new Vector( 100,100,-100),
                 new Vector(1,1,1), 50);
-        Sphere mySphere3 = new Sphere(new Vector(100,200,-100),
-                new Vector(1,1,0), 50);
+        Sphere mySphere3 = new Sphere(new Vector(200,200,-100),
+                new Vector(1,1,0), 70);
 
         myArray[0] = mySphere1;
         myArray[1] = mySphere2;
@@ -110,22 +110,28 @@ public class Main extends Application {
         b_slider.setShowTickMarks(true);
 
         Slider x_slider = new Slider(-250,250,1);
-        x_slider.setMin(0);
+        x_slider.setMin(-100);
         x_slider.setMax(255);
         x_slider.setShowTickLabels(true);
         x_slider.setShowTickMarks(true);
 
         Slider y_slider = new Slider(-250,250,1);
-        y_slider.setMin(0);
+        y_slider.setMin(-100);
         y_slider.setMax(255);
         y_slider.setShowTickLabels(true);
         y_slider.setShowTickMarks(true);
 
         Slider z_slider = new Slider(-250,250,1);
-        z_slider.setMin(0);
+        z_slider.setMin(-100);
         z_slider.setMax(255);
         z_slider.setShowTickLabels(true);
         z_slider.setShowTickMarks(true);
+
+        Slider radius_slider = new Slider(10,200,1);
+        radius_slider.setMin(30);
+        radius_slider.setMax(200);
+        radius_slider.setShowTickLabels(true);
+        radius_slider.setShowTickMarks(true);
 
         ToggleGroup tg = new ToggleGroup();
 
@@ -234,15 +240,15 @@ public class Main extends Application {
                                         observable, Number oldValue, Number newValue) {
 
                 if(isSphere1Selected == true) {
-                    Vector newCol = new Vector(myArray[0].getCs().x, myArray[0].getCs().y,myArray[0].getCs().z);
+                    Vector newCol = new Vector(newValue.doubleValue(), myArray[0].getCs().y,myArray[0].getCs().z);
                     myArray[0].setCs(newCol);
                     Render(image);
                 } else if (isSphere2Selected == true) {
-                    Vector newCol2 = new Vector(myArray[1].getCs().x, myArray[1].getCs().y,myArray[1].getCs().z);
+                    Vector newCol2 = new Vector(newValue.doubleValue(), myArray[1].getCs().y,myArray[1].getCs().z);
                     myArray[1].setCs(newCol2);
                     Render(image);
                 } else if (isSphere3Selected == true) {
-                    Vector newCol3 = new Vector(myArray[2].getCs().x, myArray[2].getCs().y,myArray[2].getCs().z);
+                    Vector newCol3 = new Vector(newValue.doubleValue(), myArray[2].getCs().y,myArray[2].getCs().z);
                     myArray[2].setCs(newCol3);
                     Render(image);
                 }
@@ -254,15 +260,15 @@ public class Main extends Application {
                                         observable, Number oldValue, Number newValue) {
 
                 if(isSphere1Selected == true) {
-                    Vector newCol = new Vector(myArray[0].getCs().x, myArray[0].getCs().y,myArray[0].getCs().z);
+                    Vector newCol = new Vector(myArray[0].getCs().x, newValue.doubleValue(),myArray[0].getCs().z);
                     myArray[0].setCs(newCol);
                     Render(image);
                 } else if (isSphere2Selected == true) {
-                    Vector newCol2 = new Vector(myArray[1].getCs().x, myArray[1].getCs().y,myArray[1].getCs().z);
+                    Vector newCol2 = new Vector(myArray[1].getCs().x, newValue.doubleValue(),myArray[1].getCs().z);
                     myArray[1].setCs(newCol2);
                     Render(image);
                 } else if (isSphere3Selected == true) {
-                    Vector newCol3 = new Vector(myArray[2].getCs().x, myArray[2].getCs().y,myArray[2].getCs().z);
+                    Vector newCol3 = new Vector(myArray[2].getCs().x, newValue.doubleValue(),myArray[2].getCs().z);
                     myArray[2].setCs(newCol3);
                     Render(image);
                 }
@@ -274,20 +280,41 @@ public class Main extends Application {
                                         observable, Number oldValue, Number newValue) {
 
                 if(isSphere1Selected == true) {
-                    Vector newCol = new Vector(myArray[0].getCs().x, myArray[0].getCs().y,myArray[0].getCs().z);
+                    Vector newCol = new Vector(myArray[0].getCs().x, myArray[0].getCs().y,newValue.doubleValue());
                     myArray[0].setCs(newCol);
                     Render(image);
                 } else if (isSphere2Selected == true) {
-                    Vector newCol2 = new Vector(myArray[1].getCs().x, myArray[1].getCs().y,myArray[1].getCs().z);
+                    Vector newCol2 = new Vector(myArray[1].getCs().x, myArray[1].getCs().y,newValue.doubleValue());
                     myArray[1].setCs(newCol2);
                     Render(image);
                 } else if (isSphere3Selected == true) {
-                    Vector newCol3 = new Vector(myArray[2].getCs().x, myArray[2].getCs().y,myArray[2].getCs().z);
+                    Vector newCol3 = new Vector(myArray[2].getCs().x, myArray[2].getCs().y,newValue.doubleValue());
                     myArray[2].setCs(newCol3);
                     Render(image);
                 }
             }
         });
+
+        radius_slider.valueProperty().addListener( new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number>
+                                        observable, Number oldValue, Number newValue) {
+
+                if(isSphere1Selected == true) {
+                    double newRadius = newValue.doubleValue();
+                    myArray[0].setR(newRadius);
+                    Render(image);
+                } else if (isSphere2Selected == true) {
+                    double newRadius = newValue.doubleValue();
+                    myArray[1].setR(newRadius);
+                    Render(image);
+                } else if (isSphere3Selected == true) {
+                    double newRadius = newValue.doubleValue();
+                    myArray[2].setR(newRadius);
+                    Render(image);
+                }
+            }
+        });
+
         //The following is in case you want to interact with the image in any way
         //e.g., for user interaction, or you can find out the pixel position for debugging
         view.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
@@ -322,6 +349,8 @@ public class Main extends Application {
         root.add(y_slider,0,6);
         root.add(z_slider,0,7);
 
+        root.add(radius_slider,0,8);
+
 
         //Display to user
         Scene scene = new Scene(root, 1024, 1000);
@@ -334,18 +363,30 @@ public class Main extends Application {
         int width = (int) image.getWidth(), height = (int) image.getHeight(), i, j;
         PixelWriter image_writer = image.getPixelWriter();
 
-        Vector o;
-        Vector d = new Vector(1, 0, 1);
         Vector Light = new Vector(250, 250, 300);
-        double disc;
-        double t;
-        Vector v;
         Vector bkgCol = new Vector(0, 0, 0);
         Vector col;
 
+        /*Vector vrp = new Vector(0,0,400);
+        Vector vuv = new Vector(0,1,0);
+        Vector lookAt = new Vector(0,0,0);
+        Vector vpn = lookAt.sub(vrp);
+        vpn.normalise();
+        Vector vrv = vpn.cross(vuv);
+        vrv.normalise();
+        vuv = vrv.cross(vpn);
+        vuv.normalise();*/
+
+        //double scale = 0.5;
+
         for (j = 0; j < height; j++) {
             for (i = 0; i < width; i++) {
-                o = new Vector(i - width / 2, j - height / 2, -400); //changing this for 7
+                //double u = (i - width/2) * scale;
+                //double v = ((height - j)-height/2) * scale;
+                //Vector d = vrp.add(vrv.mul(u)).add(vuv.mul(v));
+                Vector d = new Vector(1,0,1);
+                //Vector o = new Vector(0,0,-1000); //changing this for 7
+                Vector o = new Vector(i-width/2,j-height/2,-400);
                 double small_t = 10000;
                 o.x = i - 250;
                 o.y = j - 250;

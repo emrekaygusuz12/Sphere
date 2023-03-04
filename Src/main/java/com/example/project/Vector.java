@@ -21,6 +21,9 @@ public class Vector {
       z /= mag;
     }
   }
+  public Vector cross(Vector v2) {
+    return new Vector(y*v2.z-z*v2.y, z*v2.x-x*v2.z, x*v2.y-y*v2.x);
+  }
   public double dot(Vector a) {
     return x * a.x + y * a.y + z * a.z;
   }
