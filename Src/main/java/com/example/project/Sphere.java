@@ -41,9 +41,9 @@ public class Sphere {
         double b = 2 * v.dot(d); //intersection b
         double c = v.dot(v) - getR() * getR(); //intersection c
         double disc = b * b - 4 * a * c; //part of the quadratic formula
-        double current_t = (-b - sqrt(disc) / 2 * a); //quadratic formula
+        double current_t = ((-b - sqrt(disc)) / (2 * a)); //quadratic formula
         if(current_t < 0){
-            current_t = (-b + sqrt(disc) / 2 * a);
+            current_t = ((-b + sqrt(disc)) / (2 * a));
         }
         return current_t;
     }

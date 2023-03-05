@@ -353,7 +353,7 @@ public class Main extends Application {
 
 
         //Display to user
-        Scene scene = new Scene(root, 1024, 1000);
+        Scene scene = new Scene(root, 630, 1000);
         stage.setScene(scene);
         stage.show();
     }
@@ -363,43 +363,41 @@ public class Main extends Application {
         int width = (int) image.getWidth(), height = (int) image.getHeight(), i, j;
         PixelWriter image_writer = image.getPixelWriter();
 
-        Vector Light = new Vector(250, 250, 300);
+        Vector Light = new Vector(0, 300, -1000);
         Vector bkgCol = new Vector(0, 0, 0);
         Vector col;
 
-        /*Vector vrp = new Vector(0,0,400);
+        Vector vrp = new Vector(0,0,400);
         Vector vuv = new Vector(0,1,0);
         Vector lookAt = new Vector(0,0,0);
         Vector vpn = lookAt.sub(vrp);
+        vpn.print();
         vpn.normalise();
         Vector vrv = vpn.cross(vuv);
         vrv.normalise();
         vuv = vrv.cross(vpn);
-        vuv.normalise();*/
+        vuv.normalise();
 
-        //double scale = 0.5;
+        double scale = 0.5;
 
         for (j = 0; j < height; j++) {
             for (i = 0; i < width; i++) {
-                //double u = (i - width/2) * scale;
-                //double v = ((height - j)-height/2) * scale;
-                //Vector d = vrp.add(vrv.mul(u)).add(vuv.mul(v));
-                Vector d = new Vector(1,0,1);
-                //Vector o = new Vector(0,0,-1000); //changing this for 7
-                Vector o = new Vector(i-width/2,j-height/2,-400);
+                double u = (i - width/2) * scale;
+                double v = ((height - j)-height/2) * scale;
+                Vector d = vrp.add(vrv.mul(u)).add(vuv.mul(v));
+                Vector o = new Vector(0,0,-1000);
                 double small_t = 10000;
-                o.x = i - 250;
-                o.y = j - 250;
-                o.z = -200;
                 boolean hasHit = false;
-                Sphere testSphere = myArray[0];
+                Sphere testSphere = new Sphere(new Vector(0,0,0),new Vector(0,0,0),30);
                 for (Sphere s : myArray) {
                     if (s.intersectionHappened(o, d)) { // ray hit the sphere
                         double current_t = s.intersection(o, d); //quadratic formula
                         if (current_t < small_t) {
+                            System.out.println("test1");
                             hasHit = true;
                             testSphere = s;
                             small_t = current_t;
+
                         }
                     }
 
@@ -430,46 +428,7 @@ public class Main extends Application {
     }
 
 
-            /*
-                    o = new Vector(i - width / 2, j - height / 2, -400);
-                    o.x = i - 250;
-                    o.y = j - 250;
-                    o.z = -200;
-                    multiSphere(height,width);
-                    if (disc < 0) {
-                        image_writer.setColor(i, j, Color.color(bkgCol.x, bkgCol.y,
-                                bkgCol.z, 1.0));
-                    } else {
-                        t = (-b - sqrt(disc) / 2 * a); //quadratic formula
-                        if (t < 0) {
-                            t = (b - sqrt(disc) / 2 * a);
-                        }
-                        if (t < 0) {
-                            image_writer.setColor(i, j, Color.color(sphereCol.x,
-                                    sphereCol.y, sphereCol.z, 1.0));
-                        } else {
-                            p = o.add(d.mul(t));
-                            Vector n = p.sub(cs);
-                            n.normalise();
-                            Vector Lv = Light.sub(p);
-                            Lv.normalise();
-                            double dp = Lv.dot(n);
-                            if (dp < 0) {
-                                dp = 0;
-                            }
-                            if (dp > 1) {
-                                dp = 1;
-                            }
-                            col = sphereCol.mul(dp * 7).add(sphereCol.mul(.3));
-                            image_writer.setColor(i, j, Color.color(col.x,
-                                    col.y, col.z, 1.0));
-                        }
-                    }
-                } // column loop
-            } // row loop
-        }
 
-*/
 
     public static void main(String[] args) {
         launch();
