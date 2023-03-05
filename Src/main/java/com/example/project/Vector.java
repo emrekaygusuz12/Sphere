@@ -5,7 +5,7 @@ import java.lang.Math.*;
 public class Vector {
 
     //XYZ for each vector.
-    double x, y, z;
+     double x, y, z;
 
     public Vector() {
     }
@@ -93,6 +93,22 @@ public class Vector {
     public Vector mul(double d) {
         return new Vector(d * x, d * y, d * z);
     }
+
+    /**
+     * Calculates x,y,z
+     * @param altitude
+     * @param azimuth
+     * @param p
+     * @return
+     */
+    public Vector VPoint(double altitude, double azimuth, double p) {
+            x = p * Math.sin(Math.toRadians(azimuth)) * Math.cos(Math.toRadians(altitude));
+            y = p * Math.sin(Math.toRadians(azimuth)) * Math.sin(Math.toRadians(altitude));
+            z = p * Math.cos(Math.toRadians(azimuth));
+            return new Vector(x, y, z);
+    }
+
+
 
     /**
      * Print the vectors XYZ values.

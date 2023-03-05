@@ -42,13 +42,16 @@ import javafx.stage.Stage;
  * @version 1.0.
  */
 public class Main extends Application {
-    private int Width = 500;
-    private int Height = 500;
+    private final int Width = 500;
+    private final int Height = 500;
 
     private boolean isSphere1Selected = false;
     private boolean isSphere2Selected = false;
     private boolean isSphere3Selected = false;
     private final Sphere[] myArray = new Sphere[3];
+
+    private double altitude;
+    private double azimuth = 150;
 
     @Override
     public void start(Stage stage) throws FileNotFoundException {
@@ -71,7 +74,7 @@ public class Main extends Application {
         myArray[1] = mySphere2;
         myArray[2] = mySphere3;
 
-        //Set the intitial colour of the spheres.
+        //Set the initial colour of the spheres.
         Vector green_v = new Vector(0, 1, 0);
         myArray[0].setColour(green_v);
         Vector red_v = new Vector(1, 0, 0);
@@ -87,6 +90,8 @@ public class Main extends Application {
         Label l_y = new Label("Y axis");
         Label l_z = new Label("Z axis");
         Label l_r = new Label("Radius");
+        Label l_al = new Label("Altitude");
+        Label l_az = new Label("Azimuth");
 
         //Create Sliders and set values.
         Slider g_slider = new Slider(0, 255, 1);
@@ -126,6 +131,18 @@ public class Main extends Application {
         radius_slider.setMax(200);
         radius_slider.setShowTickLabels(true);
         radius_slider.setShowTickMarks(true);
+
+        Slider altitude_slider = new Slider(-89,89,1);
+        altitude_slider.setMin(-89);
+        altitude_slider.setMax(89);
+        altitude_slider.setShowTickLabels(true);
+        altitude_slider.setShowTickMarks(true);
+
+        Slider azimuth_slider = new Slider(150,360,1);
+        azimuth_slider.setMin(0);
+        azimuth_slider.setMax(360);
+        azimuth_slider.setShowTickLabels(true);
+        azimuth_slider.setShowTickMarks(true);
 
         ToggleGroup tg = new ToggleGroup();
 
@@ -337,7 +354,31 @@ public class Main extends Application {
             }
         });
 
-       //Get the grid coordinates for each mouse clicked on the gridpane.
+        altitude_slider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number>
+                                        observable, Number oldValue,
+                                Number newValue) {
+
+                altitude = newValue.doubleValue();
+                Render(image);
+                }
+            }
+        );
+
+        azimuth_slider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number>
+                                        observable, Number oldValue,
+                                Number newValue) {
+
+                azimuth = newValue.doubleValue();
+                Render(image);
+
+            }
+        });
+
+
+
+       //Get the grid coordinates for each mouse clicked on the grid pane.
         view.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
             System.out.println(event.getX() + " " + event.getY());
             event.consume();
@@ -349,7 +390,7 @@ public class Main extends Application {
         root.setVgap(12);
         root.setHgap(12);
 
-        //Set the view and sliders into the gridpane.
+        //Set the view and sliders into the grid pane.
         root.add(view, 0, 0);
         root.add(rb1, 1, 2);
         root.add(r_slider, 0, 2);
@@ -365,6 +406,9 @@ public class Main extends Application {
         root.add(l_y, 0, 6);
         root.add(l_z, 0, 7);
         root.add(l_r, 0, 8);
+        root.add(l_al,0,9);
+        root.add(l_az,0,10);
+
 
         root.add(x_slider, 0, 5);
         root.add(y_slider, 0, 6);
@@ -372,9 +416,12 @@ public class Main extends Application {
 
         root.add(radius_slider, 0, 8);
 
+        root.add(altitude_slider, 0,9);
+        root.add(azimuth_slider, 0,10);
+
 
         //Display to user
-        Scene scene = new Scene(root, 630, 1000);
+        Scene scene = new Scene(root, 630, 1200);
         stage.setScene(scene);
         stage.show();
     }
@@ -393,8 +440,10 @@ public class Main extends Application {
         Vector Light = new Vector(0, 300, -1000);
         Vector bkgCol = new Vector(0, 0, 0);
         Vector col;
-
-        Vector vrp = new Vector(0, 0, 400);
+        double setRadius = 500;
+        double originRadius = -1000;
+        Vector vCamera = new Vector();
+        Vector vrp = vCamera.VPoint(altitude,azimuth,setRadius);
         Vector vuv = new Vector(0, 1, 0);
         Vector lookAt = new Vector(0, 0, 0);
         Vector vpn = lookAt.sub(vrp);
@@ -405,7 +454,7 @@ public class Main extends Application {
         vuv = vrv.cross(vpn);
         vuv.normalise();
 
-        double scale = 0.5;
+        double scale = 1;
 
         //Render loop for shading,intersection, and reflections.
         for (j = 0; j < height; j++) {
@@ -413,7 +462,7 @@ public class Main extends Application {
                 double u = (i - width / 2) * scale;
                 double v = ((height - j) - height / 2) * scale;
                 Vector d = vrp.add(vrv.mul(u)).add(vuv.mul(v));
-                Vector o = new Vector(0, 0, -1000);
+                Vector o = new Vector(0,0,0).sub(vCamera.VPoint(altitude,azimuth,originRadius));
                 double small_t = 10000;
                 boolean hasHit = false;
                 Sphere testSphere = new Sphere(new Vector(0, 0, 0),
