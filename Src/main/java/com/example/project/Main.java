@@ -35,7 +35,12 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-
+/**
+ * Main Class to run Ray Tracing and Rendering.
+ *
+ * @author Sam and Emre.
+ * @version 1.0.
+ */
 public class Main extends Application {
     private int Width = 500;
     private int Height = 500;
@@ -49,14 +54,11 @@ public class Main extends Application {
     public void start(Stage stage) throws FileNotFoundException {
         stage.setTitle("Ray Tracing");
 
-        //We need 3 things to see an image
-        //1. We create an image we can write to
         WritableImage image = new WritableImage(Width, Height);
-        //2. We create a view of that image
+
         ImageView view = new ImageView(image);
-        //3. Add to the pane (below)
 
-
+        //Create three spheres.
         Sphere mySphere1 = new Sphere(new Vector(0, 0, -100),
                 new Vector(0, 1, 1), 30);
         Sphere mySphere2 = new Sphere(new Vector(100, 100, -100),
@@ -64,10 +66,12 @@ public class Main extends Application {
         Sphere mySphere3 = new Sphere(new Vector(200, 200, -100),
                 new Vector(1, 1, 0), 70);
 
+        //Add instances of Spheres to the Array
         myArray[0] = mySphere1;
         myArray[1] = mySphere2;
         myArray[2] = mySphere3;
 
+        //Set the intitial colour of the spheres.
         Vector green_v = new Vector(0, 1, 0);
         myArray[0].setColour(green_v);
         Vector red_v = new Vector(1, 0, 0);
@@ -83,7 +87,8 @@ public class Main extends Application {
         Label l_y = new Label("Y axis");
         Label l_z = new Label("Z axis");
         Label l_r = new Label("Radius");
-        //Create the simple GUI
+
+        //Create Sliders and set values.
         Slider g_slider = new Slider(0, 255, 1);
         g_slider.setMin(0);
         g_slider.setMax(255);
@@ -105,13 +110,11 @@ public class Main extends Application {
         x_slider.setMax(255);
         x_slider.setShowTickLabels(true);
         x_slider.setShowTickMarks(true);
-
         Slider y_slider = new Slider(-250, 250, 1);
         y_slider.setMin(-100);
         y_slider.setMax(255);
         y_slider.setShowTickLabels(true);
         y_slider.setShowTickMarks(true);
-
         Slider z_slider = new Slider(-250, 250, 1);
         z_slider.setMin(-100);
         z_slider.setMax(255);
@@ -134,6 +137,7 @@ public class Main extends Application {
         rb2.setToggleGroup(tg);
         rb3.setToggleGroup(tg);
 
+        //Select a sphere via Radio Buttons.
         tg.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observableValue,
@@ -160,7 +164,7 @@ public class Main extends Application {
 
         });
 
-        //Add all the event handlers
+        //Sliders Changed Listeners to add a new value to each.
         g_slider.valueProperty().addListener(
                 new ChangeListener<Number>() {
                     public void changed(ObservableValue<? extends Number>
@@ -188,7 +192,6 @@ public class Main extends Application {
                     }
                 });
 
-        //Add all the event handlers
         r_slider.valueProperty().addListener(
                 new ChangeListener<Number>() {
                     public void changed(ObservableValue<? extends Number>
@@ -214,7 +217,6 @@ public class Main extends Application {
                     }
                 });
 
-        //Add all the event handlers
         b_slider.valueProperty().addListener(
                 new ChangeListener<Number>() {
                     public void changed(ObservableValue<? extends Number>
@@ -241,8 +243,6 @@ public class Main extends Application {
                         }
                     }
                 });
-
-        //Change value of sliders max to 250.
 
         x_slider.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number>
@@ -337,8 +337,7 @@ public class Main extends Application {
             }
         });
 
-        //The following is in case you want to interact with the image in any way
-        //e.g., for user interaction, or you can find out the pixel position for debugging
+       //Get the grid coordinates for each mouse clicked on the gridpane.
         view.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
             System.out.println(event.getX() + " " + event.getY());
             event.consume();
@@ -350,8 +349,7 @@ public class Main extends Application {
         root.setVgap(12);
         root.setHgap(12);
 
-        //3. (referring to the 3 things we need to display an image)
-        //we need to add it to the pane
+        //Set the view and sliders into the gridpane.
         root.add(view, 0, 0);
         root.add(rb1, 1, 2);
         root.add(r_slider, 0, 2);
@@ -366,7 +364,7 @@ public class Main extends Application {
         root.add(l_x, 0, 5);
         root.add(l_y, 0, 6);
         root.add(l_z, 0, 7);
-        root.add(l_r,0,8);
+        root.add(l_r, 0, 8);
 
         root.add(x_slider, 0, 5);
         root.add(y_slider, 0, 6);
@@ -381,11 +379,17 @@ public class Main extends Application {
         stage.show();
     }
 
+    /**
+     * Render the spheres.
+     *
+     * @param image to render.
+     */
     public void Render(WritableImage image) {
         //Get image dimensions, and declare loop variables
         int width = (int) image.getWidth(), height = (int) image.getHeight(), i, j;
         PixelWriter image_writer = image.getPixelWriter();
 
+        //Initiation variables for rendering.
         Vector Light = new Vector(0, 300, -1000);
         Vector bkgCol = new Vector(0, 0, 0);
         Vector col;
@@ -403,6 +407,7 @@ public class Main extends Application {
 
         double scale = 0.5;
 
+        //Render loop for shading,intersection, and reflections.
         for (j = 0; j < height; j++) {
             for (i = 0; i < width; i++) {
                 double u = (i - width / 2) * scale;
@@ -420,12 +425,10 @@ public class Main extends Application {
                             hasHit = true;
                             testSphere = s;
                             small_t = current_t;
-
                         }
                     }
-
                 } //end of hit if
-                if (hasHit) {
+                if (hasHit) { //Add shading to spheres
                     Vector p = o.add(d.mul(small_t));
                     Vector n = p.sub(testSphere.getCs());
                     n.normalise();
@@ -447,7 +450,6 @@ public class Main extends Application {
                             bkgCol.z, 1.0)); //bkg col
                 }
             }
-
         }
     }
 

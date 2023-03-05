@@ -1,24 +1,27 @@
 package com.example.project;
 
-import javafx.scene.image.PixelWriter;
-import javafx.scene.paint.Color;
-
-import java.lang.reflect.Array;
-
 import static java.lang.Math.sqrt;
 
-;
+
+/**
+ * Class to create a Sphere.
+ *
+ * @author Sam and Emre.
+ * @version 1.0.
+ */
 public class Sphere {
-    private double r; //radius
-    private Vector cs; //centre
-    private Vector colour; // colour
+
+    //Global Variables to implement Constructor.
+    private double r;
+    private Vector cs;
+    private Vector colour;
 
     /**
-     * Constructor for Sphere Class
+     * Constructor to create a Sphere
      *
-     * @param cs
-     * @param colour
-     * @param r
+     * @param cs     Center of the sphere
+     * @param colour Colour of the sphere
+     * @param r      Radius of the sphere
      */
     public Sphere(Vector cs, Vector colour, double r) {
         this.cs = cs;
@@ -26,23 +29,37 @@ public class Sphere {
         this.r = r;
     }
 
-    public boolean intersectionHappened(Vector o, Vector d){
+    /**
+     * Find if an intersection has happened or not.
+     *
+     * @param o Origin of the ray
+     * @param d Direction of the ray.
+     * @return if an intersection has happened or not dependent on discriminant greater than 0.
+     */
+    public boolean intersectionHappened(Vector o, Vector d) {
         Vector v = o.sub(getCs());
         double a = d.dot(d); //intersection a
         double b = 2 * v.dot(d); //intersection b
         double c = v.dot(v) - getR() * getR(); //intersection c
         double disc = b * b - 4 * a * c; //part of the quadratic formula
-        return disc>=0;
+        return disc >= 0;
     }
 
-    public double intersection(Vector o, Vector d){
+    /**
+     * Find the intersection and calculate it.
+     *
+     * @param o
+     * @param d Direction of ray
+     * @return the intersected solution
+     */
+    public double intersection(Vector o, Vector d) {
         Vector v = o.sub(getCs());
         double a = d.dot(d); //intersection a
         double b = 2 * v.dot(d); //intersection b
         double c = v.dot(v) - getR() * getR(); //intersection c
         double disc = b * b - 4 * a * c; //part of the quadratic formula
         double current_t = ((-b - sqrt(disc)) / (2 * a)); //quadratic formula
-        if(current_t < 0){
+        if (current_t < 0) {
             current_t = ((-b + sqrt(disc)) / (2 * a));
         }
         return current_t;
@@ -55,12 +72,15 @@ public class Sphere {
     public void setCs(Vector cs) {
         this.cs = cs;
     }
-    public Vector getCs(){
+
+    public Vector getCs() {
         return cs;
     }
+
     public void setColour(Vector colour) {
         this.colour = colour;
     }
+
     public Vector getColour() {
         return colour;
     }
@@ -68,10 +88,6 @@ public class Sphere {
     public double getR() {
         return r;
     }
-
-
-
-
 
 
 }
